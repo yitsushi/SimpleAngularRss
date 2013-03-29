@@ -1,0 +1,52 @@
+<!doctype html>
+<html ng-app>
+  <head>
+    <title>Simple Angular.js RSS Reader</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" id="favicon">
+    </head>
+  <body>
+    <section id="feedlist" ng-controller="FeedListController">
+      <button ng-click="update()" ng-disabled="feedRemaining > 0">update feeds</button>
+      <div ng-repeat="feed in list" ng-click="selectFeed(feed)" ng-class="{unread: feed.unread > 0}">
+        {{feed.name}} <span ng-show="feed.unread > 0">({{feed.unread}})</span>
+      </div>
+      <input type="text" placeholder="Add feed url" ng-model="new">
+      <button ng-click="add()">add</button>
+      <div class='last-update'>Last update: {{lastUpdate | date:'MM/dd/yyyy HH:mm:ss'}}</div>
+    </section>
+    <section id="feed" ng-controller="FeedController" ng-show="list.length > 0">
+      <div ng-repeat="feed in list" class="item" ng-click="read(feed)">
+        <span ng-class="{unread: feed.unread}">{{feed.title}}</span>
+      </div>
+    </section>
+    <section id="content" ng-controller="ContentController" ng-show="item.title != ''">
+      <h1>{{item.title}}</h1>
+      <div class="c" ng-bind-html-unsafe="item.content"></div>
+      <div class="share">
+        <button
+          class="g-interactivepost"
+          data-contenturl="{{item.link}}"
+          data-clientid="58160081473.apps.googleusercontent.com"
+          data-cookiepolicy="single_host_origin"
+          data-prefilltext="I read this article with SimpleAngularRss. It's awesome :)"
+          data-calltoactionlabel="READ_MORE"
+          data-calltoactionurl="{{item.link}}">
+          Share on Google+
+        </button>
+      </div>
+    </section>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    
+    <script type="text/javascript">
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/client:plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+
+  </body>
+</html>

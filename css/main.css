@@ -1,0 +1,57 @@
+#feedlist {
+  max-width: 190px;
+  min-width: 190px;
+  padding: 10px;
+  border-right: 1px solid #aaa;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+#feedlist div {
+  padding: 3px 7px;
+}
+#feedlist div:hover {
+  background-color: #ccf;
+  cursor: pointer;
+}
+#feedlist .unread {
+  font-weight: bold;
+}
+#feed {
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  border-left: 1px solid #aaa;
+  margin-left: 202px;
+}
+#feed .item {
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+#feed .item:hover {
+  background-color: #ccf;
+}
+#feed .item span {
+  border-left: 3px solid transparent;
+  padding: 2px 5px;
+}
+#feed .item .unread {
+  font-weight: bold;
+  border-left-color: green;
+}
+#content {
+  margin-left: 202px;
+}
+#content h1 {
+  padding-top: 10px;
+  border-top: 1px solid #aaa;
+  padding-left: 10px;
+}
+#content .c {
+  padding-left: 10px;
+}
+.last-update {
+  position: absolute;
+  bottom: 0;
+  font-size: 0.7em;
+}
