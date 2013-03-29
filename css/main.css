@@ -23,6 +23,18 @@ a:focus, a:hover, a:active {
   left: 0;
   bottom: 0;
 }
+#feedlist a[rel="publisher"] {
+  position: absolute;
+  bottom: 30px;
+  left: 80px;
+  text-decoration: none;
+}
+#feedlist a[rel="publisher"] img {
+  border: 0;
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+}
 #feedlist div.feed {
   padding: 5px 7px;
 }
