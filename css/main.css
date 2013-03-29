@@ -1,3 +1,18 @@
+html, body {
+  font-family: sans-serif;
+  font-size: 13px;
+}
+
+a {
+  color:#1863a1;
+  -moz-transition:color 0.3s;
+  -o-transition:color 0.3s;
+  transition:color 0.3s;
+}
+a:focus, a:hover, a:active {
+  color: #0181eb;
+}
+
 #feedlist {
   max-width: 190px;
   min-width: 190px;
@@ -8,43 +23,84 @@
   left: 0;
   bottom: 0;
 }
-#feedlist div {
-  padding: 3px 7px;
+#feedlist div.feed {
+  padding: 5px 7px;
 }
-#feedlist div:hover {
-  background-color: #ccf;
+#feedlist div.feed:hover {
+  background-color: #cc3732;
+  color: #fff;
   cursor: pointer;
+}
+#feedlist button {
+  padding: 5px;
+  background: #fff;
+  cursor: pointer;
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+  width: 100%;
+}
+#feedlist input {
+  padding: 5px;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+  width: 50%;
+}
+.add-feed-form {
+  padding-top: 20px;
+}
+.add-feed-form span {
+  font-size: 11px;
+  width: 40%;
+  float: right;
+  color: #aaa;
+  padding-top: 7px;
 }
 #feedlist .unread {
   font-weight: bold;
 }
+#feedlist .feed.selected {
+  border-left: 5px solid #555;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+
 #feed {
   margin-top: 10px;
   border-top: 1px solid #eee;
   border-left: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
   margin-left: 202px;
+  max-height: 195px;
+  overflow-y: auto;
 }
 #feed .item {
   border-bottom: 1px solid #eee;
   cursor: pointer;
+  padding: 5px 5px;
+  border-left: 5px solid transparent;
 }
 #feed .item:hover {
-  background-color: #ccf;
+  background-color: #cc3732;
+  color: #fff;
 }
-#feed .item span {
-  border-left: 3px solid transparent;
-  padding: 2px 5px;
-}
-#feed .item .unread {
+#feed .item.unread {
   font-weight: bold;
-  border-left-color: green;
+  border-left-color: #cc3732;
 }
+#feed .item.selected {
+  border-left-color: #555;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+
 #content {
   margin-left: 202px;
+  padding-bottom: 50px;
 }
 #content h1 {
-  padding-top: 10px;
-  border-top: 1px solid #aaa;
   padding-left: 10px;
 }
 #content .c {
@@ -52,6 +108,44 @@
 }
 .last-update {
   position: absolute;
-  bottom: 0;
+  bottom: 5px;
   font-size: 0.7em;
+}
+
+#content .share {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 210px;
+  border-top: 1px solid #aaa;
+  border-left: 1px solid #aaa;
+  padding: 5px;
+  background-color: white;
+  height: 40px;
+}
+
+/**
+ * Google+ Share CSS
+ */
+#_share-gplus {
+  padding: 5px;
+  background: #fff;
+  cursor: pointer;
+  line-height: 20px;
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+}
+#_share-gplus .icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  background: url('https://developers.google.com/+/images/branding/btn_icons_sprite.png') transparent 0 -40px no-repeat;
+}
+#_share-gplus:hover {
+  background-color: #cc3732;
+  color: #fff;
+  border: #dd4b39;
+}
+#_share-gplus:hover .icon {
+  background: url('https://developers.google.com/+/images/branding/btn_icons_sprite.png') transparent 0 0px no-repeat;
 }

@@ -7,17 +7,17 @@ var LocalStorage = (function() {
   var generateKey = function(key) {
     return prefix + "." + key;
   };
-  
+
   var add = function(key, value) {
     if (!supported) { return false; }
     return localStorage.setItem(generateKey(key), JSON.stringify(value));
   };
-  
+
   var remove = function(key) {
     if (!supported) { return false; }
     return localStorage.removeItem(generateKey(key));
   };
-  
+
   var get = function(key) {
     if (!supported) { return false; }
     try {
@@ -26,7 +26,7 @@ var LocalStorage = (function() {
       return null;
     }
   };
-  
+
   var clearAll = function() {
     if (!supported) { return false; }
     for (var key in localStorage) {
@@ -36,7 +36,7 @@ var LocalStorage = (function() {
     }
     return true;
   };
-  
+
   return {
     add: add,
     set: add,
@@ -88,17 +88,20 @@ var Utilities = (function() {
 
 var FeedController = function($scope, $rootScope) {
   $scope.list = [];
+  $scope.selected = null;
   var current = null;
-  
+
   $scope.read = function(item) {
     $rootScope.$broadcast("change-item", item, $scope.list, current);
+    $scope.selected = item;
   };
-  
+
   $rootScope.$on("change-feed", function(event, id) {
     current = id;
+    $scope.selected = null;
     $scope.list = LocalStorage.get("items-" + id);
   });
-  
+
   $rootScope.$on("update-unread-count", function(event, id, count, just_update) {
     if (typeof just_update == "undefined") {
       LocalStorage.set('items-' + id, $scope.list);
@@ -108,7 +111,7 @@ var FeedController = function($scope, $rootScope) {
       }
     }
   });
-  
+
   $rootScope.$on("refresh", function(event) {
     $scope.list = LocalStorage.get('items-' + current);
     $scope.$apply();
@@ -118,8 +121,11 @@ var FeedController = function($scope, $rootScope) {
 var FeedListController = function($scope, $rootScope) {
   $scope.list = LocalStorage.get('feedlist');
   $scope.new  = "";
-  var selected = null;
-  
+  $scope.feedRemaining = 0;
+  $scope.lastUpdate = "Never";
+
+  $scope.selected = null;
+
   $rootScope.$on("update-unread-count", function(event, id, count) {
     for(var i in $scope.list) {
       if ($scope.list.hasOwnProperty(i) && $scope.list[i].hasOwnProperty('id') && $scope.list[i].id == id) {
@@ -130,7 +136,7 @@ var FeedListController = function($scope, $rootScope) {
     updateSumUnread();
     return true;
   });
-  
+
   var updateSumUnread = function() {
     var unread = 0;
     for(var i in $scope.list) {
@@ -141,7 +147,7 @@ var FeedListController = function($scope, $rootScope) {
     }
     return Utilities.changeFavicon(unread);
   };
-  
+
   $rootScope.$on("save", function(event) {
     LocalStorage.set('feedlist', $scope.list);
     $scope.list = LocalStorage.get('feedlist');
@@ -149,18 +155,19 @@ var FeedListController = function($scope, $rootScope) {
     updateSumUnread();
     return true;
   });
-  
+
   $rootScope.$on("refresh", function(event) {
     updateSumUnread();
     $scope.list = LocalStorage.get('feedlist');
     $scope.$apply();
     updateSumUnread();
   });
-  
+
   $scope.selectFeed = function(item) {
+    $scope.selected = item;
     $rootScope.$broadcast("change-feed", item.id);
   };
-  
+
   $scope.add = function() {
     var feed = new google.feeds.Feed($scope.new);
     feed.setResultFormat(google.feeds.Feed.JSON_FORMAT);
@@ -187,10 +194,7 @@ var FeedListController = function($scope, $rootScope) {
     });
     $scope.new = "";
   };
-  
-  $scope.feedRemaining = 0;
-  $scope.lastUpdate = "Never";
-  
+
   $scope.update = function() {
     var updateFeed = function(response) {
       response = response.feed;
@@ -214,15 +218,15 @@ var FeedListController = function($scope, $rootScope) {
       })).length;
       LocalStorage.set('items-' + response.feedUrl, items);
       $rootScope.$broadcast("update-unread-count", response.feedUrl, unread_count, true);
-      
+
       $scope.feedRemaining--;
-      
+
       if ($scope.feedRemaining < 1) {
         $scope.feedRemaining = 0;
         $rootScope.$broadcast("refresh");
       }
     };
-    
+
     for(var i = 0, _l = $scope.list.length; i < _l; i++) {
       $scope.feedRemaining++;
       var feed = new google.feeds.Feed($scope.list[i].id);
@@ -232,17 +236,43 @@ var FeedListController = function($scope, $rootScope) {
     }
     $scope.lastUpdate = new Date();
   };
-  
+
   setInterval($scope.update, 1000*60*5);
   updateSumUnread();
 };
 
 var ContentController = function($scope, $rootScope) {
-  $scope.item = {
+  var defaults = {
     title: "",
-    content: ""
+    content: "",
+    link: "http://yitsushi.github.com/SimpleAngularRss/"
   };
-  
+  $scope.item = defaults;
+
+  $rootScope.$on("change-item", function(event, item, list, list_id) {
+    $scope.item = item;
+    item.unread = false;
+    var unread_count = (list.filter(function(v) {
+      return v.unread;
+    })).length;
+    for(var list = document.getElementsByTagName("a"), i = 0; i < list.length; i++) {
+      list[i].target = "_blank";
+    }
+    $rootScope.$broadcast("update-unread-count", list_id, unread_count);
+  });
+
+  $rootScope.$on("change-feed", function(event, id) {
+    $scope.item = defaults;
+  });
+};
+
+var HeaderController = function($scope, $rootScope) {
+  var defaults = {
+    title: "Simple Angular.js RSS Reader",
+    contentSnippet: "This is a simple RSS reader with Angular.js. Just a simple file and some makeup. :)"
+  };
+  $scope.item = defaults;
+
   $rootScope.$on("change-item", function(event, item, list, list_id) {
     $scope.item = item;
     item.unread = false;
@@ -250,6 +280,21 @@ var ContentController = function($scope, $rootScope) {
       return v.unread;
     })).length;
     $rootScope.$broadcast("update-unread-count", list_id, unread_count);
+
+    var options = {
+      contenturl: item.link,
+      clientid: '58160081473.apps.googleusercontent.com',
+      cookiepolicy: 'single_host_origin',
+      prefilltext: "I read this article with SimpleAngularRss. It's awesome :)\n\n+117585353655713812382",
+      calltoactionlabel: 'READ_MORE',
+      calltoactionurl: item.link
+    };
+    gapi.interactivepost.render('_share-gplus', options);
+    gapi.interactivepost.render('_share-gplus', options);
+  });
+
+  $rootScope.$on("change-feed", function(event, id) {
+    $scope.item = defaults;
   });
 };
 
@@ -259,7 +304,7 @@ var initializeApp = function() {
         return false;
     }
     LocalStorage.clearAll();
-    
+
     LocalStorage.add('feedlist', []);
 };
 initializeApp();
