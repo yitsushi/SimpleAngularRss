@@ -124,6 +124,10 @@ var FeedListController = function($scope, $rootScope) {
   $scope.feedRemaining = 0;
   $scope.lastUpdate = "Never";
 
+  if (typeof $scope.list != typeof []) {
+    $scope.list = [];
+  }
+
   $scope.selected = null;
 
   $rootScope.$on("update-unread-count", function(event, id, count) {
