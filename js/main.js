@@ -2,7 +2,7 @@ var LocalStorage = (function() {
   var prefix = "rss-reader",
       supported = false;
 
-  supported = (window.hasOwnProperty("localStorage") && 'localStorage' in window);
+  supported = (window.hasOwnProperty("localStorage") || 'localStorage' in window);
 
   var generateKey = function(key) {
     return prefix + "." + key;
