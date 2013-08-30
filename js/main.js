@@ -2,7 +2,7 @@ var LocalStorage = (function() {
   var prefix = "rss-reader",
       supported = false;
 
-  supported = (window.hasOwnProperty("localStorage") && 'localStorage' in window);
+  supported = (window.hasOwnProperty("localStorage") || 'localStorage' in window);
 
   var generateKey = function(key) {
     return prefix + "." + key;
@@ -54,7 +54,7 @@ var Utilities = (function() {
     var ctx = canvas.getContext('2d');
     var img = new Image();
     img.src = 'favicon.ico';
-    return img.onload = function() {
+    img.onload = function() {
         ctx.drawImage(img, 0, 0);
         if (number !== null) {
           ctx.fillStyle = "#000";
@@ -173,6 +173,11 @@ var FeedListController = function($scope, $rootScope) {
   };
 
   $scope.add = function() {
+    $scope.new = $scope.new.trim();
+    if ($scope.new === "") {
+      alert("Empty URL. If you do not want to add a new address, please do not press the Add button");
+      return false;
+    }
     var feed = new google.feeds.Feed($scope.new);
     feed.setResultFormat(google.feeds.Feed.JSON_FORMAT);
     feed.setNumEntries(20);
@@ -259,7 +264,7 @@ var ContentController = function($scope, $rootScope) {
     var unread_count = (list.filter(function(v) {
       return v.unread;
     })).length;
-    for(var list = document.getElementsByTagName("a"), i = 0; i < list.length; i++) {
+    for(list = document.getElementsByTagName("a"), i = 0; i < list.length; i++) {
       list[i].target = "_blank";
     }
     $rootScope.$broadcast("update-unread-count", list_id, unread_count);
